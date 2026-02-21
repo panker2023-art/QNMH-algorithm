@@ -1,3 +1,0 @@
-# security
-
-*Define content here.*

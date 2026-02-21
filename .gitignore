@@ -30,3 +30,5 @@ htmlcov/
 *.h5
 *.csv
 .env
+.roo/
+scripts/.roo/
