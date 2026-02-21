@@ -1,4 +1,4 @@
-name: jitian-intelligence
+name: QNMH
 channels:
   - conda-forge
   - defaults

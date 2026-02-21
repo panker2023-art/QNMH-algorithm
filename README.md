@@ -26,7 +26,7 @@ The project follows a Hexagonal/Modular architecture designed for compute-intens
     ```
 2.  Activate the environment:
     ```bash
-    conda activate jitian-intelligence
+    conda activate QNMH
     ```
 
 ### Using Pip

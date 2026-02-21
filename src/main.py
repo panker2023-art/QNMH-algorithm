@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from src.api.endpoints import router as analysis_router
 
 app = FastAPI(
-    title="Jitian Intelligence API",
+    title="Quantitative Network Motif Homology (QNMH) API",
     description="Backend for QNMH algorithm and PRI evaluation system",
     version="0.1.0"
 )
