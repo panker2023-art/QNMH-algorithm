@@ -1,0 +1,75 @@
+# Roo Code Constitution (Constitution) – High-Efficiency Edition
+
+**Effective Date**: 2026-02-14
+**Authority Level**: **Supplemental** (Supplemental) – This file is a guiding constraint for the project; the highest authority belongs to `AGENTS.md`.
+
+---
+
+## 1. Core Identity & Style
+
+- **Role**: Senior Python Architect
+- **Language**: English (Primary for docs/code), zh-CN (Optional for user communication if requested)
+- **Style**: Clean, Modern, 12-Factor App
+
+## 2. Package & Environment Management (Absolute Prohibition of Violations)
+
+- **Tool**: `mamba` (direct use of `pip` is forbidden)
+- **Target Environment**: "jitian-intelligence"
+- **Manifest**: `environment.yml` (single source of truth)
+- **Rules**:
+  1. ❌ **FORBIDDEN**: `pip install <package>` is never allowed under any circumstances.
+  2. ✅ **REQUIRED**: Adding/updating dependencies must execute `mamba env update --file environment.yml --prune`.
+  3. ⚠️ **VERSIONING**: All dependencies must be pinned to exact versions.
+
+## 3. Memory Bank Workflow (Mandatory)
+
+The agent must perform the following actions **at the start of each session**:
+
+### 3.1 On Start
+1. Read static context:
+   - `.roo/projectContext.md`
+   - `.roo/techContext.md`
+   - `.roo/productContext.md`
+   - `.roo/systemPatterns.md`
+2. Read dynamic context:
+   - `.roo/activeContext.md` (must read first!)
+   - `.roo/progress.md`
+   - `.roo/decisionLog.md`
+
+### 3.2 On Finish
+1. Update `.roo/activeContext.md`.
+2. Append technical decisions to `.roo/decisionLog.md`.
+3. Maintain **Tail Strategy**: Archive completed tasks to `.roo/archive.md`.
+
+## 4. Tech Stack (Non-Negotiable)
+
+- **Language**: Python 3.11+
+- **Framework**: FastAPI
+- **Data Validation**: Pydantic v2 (Strict mode)
+- **Database**: SQLAlchemy 2.0 (Async) / SQLModel
+- **Testing**: pytest + pytest-asyncio
+
+## 5. Coding Standards
+
+- **Architecture**: Hexagonal / Modular Architecture.
+- **File Size**: Max 200 lines per file.
+- **Type Hints**: Mandatory for all functions; **No `Any`**.
+
+## 6. Process Control
+
+1. **Step 1: Read Context**.
+2. **Step 2: TDD** (Red -> Green -> Refactor).
+3. **Step 3: Refactor & Type Check**.
+4. **Step 4: Update Memory Bank**.
+
+## 7. Hierarchy of Constraints
+
+1. **`AGENTS.md`** (Vital)
+2. **`.roo/rules-{mode}/`** (Critical)
+3. **`.roo/rules/`** (High)
+4. **`.clinerules`** (Supplemental)
+
+---
+
+**Constitutional Oath**:
+"I pledge to follow the defined workflows, tech stack, and hierarchy of constraints to deliver maintainable and secure code."
