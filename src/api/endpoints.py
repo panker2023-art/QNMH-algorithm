@@ -3,9 +3,12 @@ from fastapi.responses import JSONResponse
 from uuid import UUID
 import os
 import shutil
+import logging
 from src.core.models.api_models import TaskSubmitRequest, TaskStatusResponse
 from src.infrastructure.compute.manager import task_manager
 from src.infrastructure.compute.tasks import run_qnmh_analysis
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/analysis", tags=["analysis"])
 ui_router = APIRouter(prefix="/api", tags=["ui"])
@@ -56,6 +59,7 @@ async def submit_qnmh_task(request: TaskSubmitRequest, background_tasks: Backgro
             progress=status_info.get("progress", 0.0)
         )
     except Exception as e:
+        logger.error(f"Error submitting QNMH task: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/qnmh/{task_id}", response_model=TaskStatusResponse)

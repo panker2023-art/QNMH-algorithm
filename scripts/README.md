@@ -1,3 +1,0 @@
-# README
-
-*Define content here.*

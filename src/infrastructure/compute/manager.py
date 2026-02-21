@@ -1,4 +1,5 @@
 import asyncio
+import functools
 from concurrent.futures import ProcessPoolExecutor
 from typing import Callable, Any, Dict
 from uuid import UUID, uuid4
@@ -20,9 +21,12 @@ class TaskManager:
             "error_message": None
         }
 
+        # run_in_executor does not accept kwargs directly. We use partial to bind them.
+        partial_func = functools.partial(func, *args, **kwargs)
+
         # Run task in executor without blocking the event loop
         loop = asyncio.get_running_loop()
-        future = loop.run_in_executor(self.executor, func, *args, **kwargs)
+        future = loop.run_in_executor(self.executor, partial_func)
         
         # Add callback to update status when finished
         asyncio.create_task(self._monitor_task(task_id, future))

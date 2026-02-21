@@ -11,8 +11,9 @@ class NetworkXQNMHSolver(QNMHSolver):
         For simplicity in prototype, expecting edgelist format.
         """
         try:
-            # Assumes a simple edge list: source target weight
-            G = nx.read_edgelist(file_path, data=(('weight', float),))
+            # Handle both lines with and without weights
+            # Allow comments and skip empty lines
+            G = nx.read_edgelist(file_path, data=(('weight', float),), comments='#')
             return G
         except Exception as e:
             raise ValueError(f"Failed to load network from {file_path}: {e}")

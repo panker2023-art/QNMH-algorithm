@@ -32,3 +32,5 @@ htmlcov/
 .env
 .roo/
 scripts/.roo/
+.clinerules
+AGENTS.md

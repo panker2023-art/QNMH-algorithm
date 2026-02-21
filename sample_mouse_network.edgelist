@@ -1,0 +1,12 @@
+# Example Mouse Network (.edgelist)
+# This represents a simple molecular network for testing S_iso calculation
+Trem2 Tyrobp 0.95
+Tyrobp Syk 0.88
+Syk Plcg2 0.75
+Trem2 Apoe 0.60
+Apoe Clu 0.82
+Plcg2 Itpr1 0.70
+Apoe Lrp1 0.85
+Lrp1 App 0.90
+App Bace1 0.78
+Bace1 Psen1 0.92

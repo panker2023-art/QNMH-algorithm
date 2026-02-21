@@ -240,6 +240,11 @@
                 })
             });
             const taskData = await taskRes.json();
+            
+            if (!taskRes.ok) {
+                throw new Error(taskData.detail || "Server error during task submission");
+            }
+            
             const taskId = taskData.task_id;
 
             // 3. Poll for results

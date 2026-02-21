@@ -1,0 +1,13 @@
+# Example Human Reference Network (.edgelist)
+# This represents a similar human molecular network
+TREM2 TYROBP 0.96
+TYROBP SYK 0.89
+SYK PLCG2 0.72
+TREM2 APOE 0.65
+APOE CLU 0.80
+PLCG2 ITPR1 0.75
+APOE LRP1 0.82
+LRP1 APP 0.95
+APP BACE1 0.81
+BACE1 PSEN1 0.90
+PSEN1 NCSTN 0.85
