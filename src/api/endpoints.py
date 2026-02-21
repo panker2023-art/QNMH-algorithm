@@ -1,11 +1,37 @@
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi import APIRouter, HTTPException, BackgroundTasks, File, UploadFile
+from fastapi.responses import JSONResponse
 from uuid import UUID
+import os
+import shutil
 from src.core.models.api_models import TaskSubmitRequest, TaskStatusResponse
 from src.infrastructure.compute.manager import task_manager
 from src.infrastructure.compute.tasks import run_qnmh_analysis
-import asyncio
 
 router = APIRouter(prefix="/analysis", tags=["analysis"])
+ui_router = APIRouter(prefix="/api", tags=["ui"])
+
+UPLOAD_DIR = "src/uploads"
+
+@ui_router.post("/upload")
+async def upload_files(source_file: UploadFile = File(...), ref_file: UploadFile = File(...)):
+    """
+    Handle file uploads from the UI.
+    """
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    
+    source_path = os.path.join(UPLOAD_DIR, source_file.filename)
+    ref_path = os.path.join(UPLOAD_DIR, ref_file.filename)
+    
+    with open(source_path, "wb") as buffer:
+        shutil.copyfileobj(source_file.file, buffer)
+        
+    with open(ref_path, "wb") as buffer:
+        shutil.copyfileobj(ref_file.file, buffer)
+        
+    return JSONResponse({
+        "source_path": source_path,
+        "ref_path": ref_path
+    })
 
 @router.post("/qnmh", response_model=TaskStatusResponse, status_code=202)
 async def submit_qnmh_task(request: TaskSubmitRequest, background_tasks: BackgroundTasks):

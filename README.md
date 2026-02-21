@@ -14,6 +14,7 @@ The project follows a Hexagonal/Modular architecture designed for compute-intens
     *   `pri/`: Calculation logic for the Precision Risk Index.
 *   **`src/infrastructure/`**: Task compute and data management.
     *   `compute/`: `ProcessPoolExecutor` based asynchronous task manager to prevent blocking the web server event loop during large graph computations.
+*   **`src/static/`**: Contains the beautiful HTML/JS frontend Dashboard.
 *   **`src/tests/`**: Pytest suites covering domain logic and API integration.
 
 ## Installation
@@ -32,7 +33,7 @@ The project follows a Hexagonal/Modular architecture designed for compute-intens
 ### Using Pip
 
 ```bash
-pip install -e ".[dev]"
+pip install -e ".[dev]" python-multipart
 ```
 
 ## Running the Server
@@ -42,6 +43,11 @@ Start the FastAPI server using Uvicorn:
 ```bash
 uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
 ```
+
+## Accessing the Dashboard UI
+
+Once the server is running, open your web browser and navigate to the root address to use the visual dashboard:
+👉 **http://localhost:8000/**
 
 You can then access the interactive API documentation at:
 *   Swagger UI: http://localhost:8000/docs
@@ -53,33 +59,4 @@ Execute the test suite using pytest:
 
 ```bash
 pytest
-```
-
-## Usage Example
-
-### Submit a QNMH Analysis Task
-
-```bash
-curl -X 'POST' \
-  'http://localhost:8000/analysis/qnmh' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "matrix_file_path": "/path/to/mouse_network.edgelist",
-  "reference_network_path": "/path/to/human_network.edgelist",
-  "metadata": {
-    "genetic_robustness": 0.85,
-    "toxicity_penalty": 0.1
-  }
-}'
-```
-
-This returns a `task_id` (HTTP 202 Accepted).
-
-### Poll Task Status
-
-```bash
-curl -X 'GET' \
-  'http://localhost:8000/analysis/qnmh/<YOUR_TASK_ID>' \
-  -H 'accept: application/json'
 ```

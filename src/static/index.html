@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QNMH Algorithm Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .gradient-text {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #2563eb, #7c3aed);
+        }
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .file-upload-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .progress-bar-animated {
+            background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+            background-size: 1rem 1rem;
+            animation: progress-animation 1s linear infinite;
+        }
+        @keyframes progress-animation {
+            from { background-position: 1rem 0; }
+            to { background-position: 0 0; }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800">
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Header -->
+    <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+            <span class="gradient-text">QNMH Algorithm</span> & PRI Evaluation
+        </h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            Quantitative Network Motif Homology framework for translating complex disease mechanisms across species.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Configuration Panel -->
+        <div class="lg:col-span-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 class="text-xl font-semibold mb-6 flex items-center text-gray-800">
+                <i class="fas fa-sliders-h text-blue-600 mr-2"></i> Analysis Configuration
+            </h2>
+            
+            <form id="analysis-form">
+                <!-- File Uploads -->
+                <div class="space-y-4 mb-8">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Animal Model Network (.edgelist)</label>
+                        <div class="file-upload-wrapper w-full">
+                            <button type="button" class="w-full bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center transition-colors">
+                                <i class="fas fa-upload mr-2"></i> <span id="source-file-name">Choose Source Network</span>
+                            </button>
+                            <input type="file" id="source-file" accept=".txt,.csv,.edgelist" required onchange="document.getElementById('source-file-name').innerText = this.files[0] ? this.files[0].name : 'Choose Source Network'">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Human Reference Network (.edgelist)</label>
+                        <div class="file-upload-wrapper w-full">
+                            <button type="button" class="w-full bg-purple-50 text-purple-600 border border-purple-200 hover:bg-purple-100 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center transition-colors">
+                                <i class="fas fa-file-import mr-2"></i> <span id="ref-file-name">Choose Reference Network</span>
+                            </button>
+                            <input type="file" id="ref-file" accept=".txt,.csv,.edgelist" required onchange="document.getElementById('ref-file-name').innerText = this.files[0] ? this.files[0].name : 'Choose Reference Network'">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parameters -->
+                <div class="space-y-6 mb-8">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-sm font-medium text-gray-700">Genetic Robustness</label>
+                            <span id="robustness-val" class="text-sm font-bold text-blue-600">0.80</span>
+                        </div>
+                        <input type="range" id="robustness" min="0" max="1" step="0.05" value="0.8" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" oninput="document.getElementById('robustness-val').innerText = this.value">
+                        <p class="text-xs text-gray-500 mt-1">Stability across genetic backgrounds.</p>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-sm font-medium text-gray-700">Toxicity Penalty</label>
+                            <span id="toxicity-val" class="text-sm font-bold text-red-500">0.10</span>
+                        </div>
+                        <input type="range" id="toxicity" min="0" max="1" step="0.05" value="0.1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-red-500" oninput="document.getElementById('toxicity-val').innerText = this.value">
+                        <p class="text-xs text-gray-500 mt-1">Predicted off-target toxicity risk.</p>
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center">
+                    <i class="fas fa-play mr-2"></i> Run Analysis
+                </button>
+            </form>
+        </div>
+
+        <!-- Results Dashboard -->
+        <div class="lg:col-span-8 space-y-6">
+            <!-- Status Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-server text-indigo-500 mr-2"></i> Execution Status
+                    </h2>
+                    <span id="task-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500">IDLE</span>
+                </div>
+                
+                <div id="progress-container" class="hidden">
+                    <div class="w-full bg-gray-200 rounded-full h-4 mb-2 overflow-hidden">
+                        <div id="progress-bar" class="bg-blue-600 h-4 rounded-full progress-bar-animated transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <p id="status-text" class="text-sm text-gray-500 italic">Initializing graph processing engines...</p>
+                </div>
+                
+                <div id="idle-text" class="text-center py-8 text-gray-400">
+                    <i class="fas fa-project-diagram text-4xl mb-3 opacity-30"></i>
+                    <p>Configure parameters and upload networks to begin.</p>
+                </div>
+            </div>
+
+            <!-- Metrics Card -->
+            <div id="metrics-card" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hidden transition-all">
+                <h2 class="text-xl font-semibold mb-6 text-gray-800">
+                    <i class="fas fa-chart-pie text-green-500 mr-2"></i> Discovery Metrics
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- QNMH Score -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
+                        <h3 class="text-blue-800 font-medium text-sm uppercase tracking-wider mb-1">Motif Homology (S_iso)</h3>
+                        <div class="flex items-baseline">
+                            <span id="res-qnmh" class="text-4xl font-extrabold text-blue-600">0.000</span>
+                            <span class="text-sm text-blue-400 ml-2">/ 1.0</span>
+                        </div>
+                        <p class="text-xs text-blue-600/70 mt-2">Network topological congruence</p>
+                    </div>
+
+                    <!-- PRI Score -->
+                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-5 border border-purple-100">
+                        <h3 class="text-purple-800 font-medium text-sm uppercase tracking-wider mb-1">Precision Risk Index (PRI)</h3>
+                        <div class="flex items-baseline">
+                            <span id="res-pri" class="text-4xl font-extrabold text-purple-600">0.000</span>
+                            <span class="text-sm text-purple-400 ml-2">/ 1.0</span>
+                        </div>
+                        <p class="text-xs text-purple-600/70 mt-2">Overall translation confidence</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-gray-100">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-3">Network Statistics</h4>
+                    <div class="flex gap-4">
+                        <div class="bg-gray-50 px-4 py-2 rounded-lg border border-gray-100 flex-1">
+                            <span class="text-xs text-gray-500 block">Model Nodes</span>
+                            <span id="res-nodes-src" class="font-semibold text-gray-800">-</span>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-2 rounded-lg border border-gray-100 flex-1">
+                            <span class="text-xs text-gray-500 block">Reference Nodes</span>
+                            <span id="res-nodes-ref" class="font-semibold text-gray-800">-</span>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-2 rounded-lg border border-gray-100 flex-1">
+                            <span class="text-xs text-gray-500 block">Conserved Motifs</span>
+                            <span id="res-motifs" class="font-semibold text-gray-800">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('analysis-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const sourceFile = document.getElementById('source-file').files[0];
+        const refFile = document.getElementById('ref-file').files[0];
+        const robustness = parseFloat(document.getElementById('robustness').value);
+        const toxicity = parseFloat(document.getElementById('toxicity').value);
+
+        if (!sourceFile || !refFile) {
+            alert("Please select both network files.");
+            return;
+        }
+
+        // UI Updates for loading
+        const btn = document.getElementById('submit-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Uploading...';
+        
+        document.getElementById('idle-text').classList.add('hidden');
+        document.getElementById('progress-container').classList.remove('hidden');
+        document.getElementById('metrics-card').classList.add('hidden');
+        document.getElementById('task-badge').className = 'px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700';
+        document.getElementById('task-badge').innerText = 'UPLOADING';
+
+        try {
+            // 1. Upload files first
+            const formData = new FormData();
+            formData.append('source_file', sourceFile);
+            formData.append('ref_file', refFile);
+
+            const uploadRes = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const paths = await uploadRes.json();
+
+            // 2. Submit analysis task
+            document.getElementById('task-badge').innerText = 'PROCESSING';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
+            document.getElementById('progress-bar').style.width = '30%';
+            document.getElementById('status-text').innerText = 'Analyzing motif homology...';
+
+            const taskRes = await fetch('/analysis/qnmh', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    matrix_file_path: paths.source_path,
+                    reference_network_path: paths.ref_path,
+                    metadata: {
+                        genetic_robustness: robustness,
+                        toxicity_penalty: toxicity
+                    }
+                })
+            });
+            const taskData = await taskRes.json();
+            const taskId = taskData.task_id;
+
+            // 3. Poll for results
+            pollTask(taskId);
+
+        } catch (error) {
+            console.error(error);
+            alert("An error occurred during submission.");
+            resetUI();
+        }
+    });
+
+    async function pollTask(taskId) {
+        try {
+            const res = await fetch(`/analysis/qnmh/${taskId}`);
+            const data = await res.json();
+
+            if (data.status === 'COMPLETED') {
+                document.getElementById('progress-bar').style.width = '100%';
+                document.getElementById('progress-bar').classList.remove('progress-bar-animated');
+                document.getElementById('progress-bar').classList.add('bg-green-500');
+                document.getElementById('status-text').innerText = 'Analysis complete!';
+                
+                document.getElementById('task-badge').className = 'px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700';
+                document.getElementById('task-badge').innerText = 'COMPLETED';
+                
+                showResults(data.result);
+                resetBtn();
+            } else if (data.status === 'FAILED') {
+                document.getElementById('progress-bar').classList.remove('progress-bar-animated');
+                document.getElementById('progress-bar').classList.add('bg-red-500');
+                document.getElementById('status-text').innerText = 'Error: ' + data.error_message;
+                
+                document.getElementById('task-badge').className = 'px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700';
+                document.getElementById('task-badge').innerText = 'FAILED';
+                resetBtn();
+            } else {
+                // Keep polling
+                setTimeout(() => pollTask(taskId), 1000);
+            }
+        } catch (e) {
+            console.error(e);
+            resetBtn();
+        }
+    }
+
+    function showResults(result) {
+        document.getElementById('metrics-card').classList.remove('hidden');
+        
+        // Animate numbers
+        animateValue('res-qnmh', 0, result.qnmh_score, 1000);
+        animateValue('res-pri', 0, result.pri_score, 1000);
+        
+        document.getElementById('res-nodes-src').innerText = result.nodes_source;
+        document.getElementById('res-nodes-ref').innerText = result.nodes_ref;
+        document.getElementById('res-motifs').innerText = result.motifs.triangles || 0;
+    }
+
+    function animateValue(id, start, end, duration) {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            document.getElementById(id).innerHTML = (progress * (end - start)).toFixed(3);
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    function resetBtn() {
+        const btn = document.getElementById('submit-btn');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-play mr-2"></i> Run New Analysis';
+    }
+
+    function resetUI() {
+        resetBtn();
+        document.getElementById('task-badge').className = 'px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500';
+        document.getElementById('task-badge').innerText = 'IDLE';
+    }
+</script>
+</body>
+</html>
